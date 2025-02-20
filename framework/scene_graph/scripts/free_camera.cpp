@@ -38,11 +38,12 @@ const float FreeCamera::ROTATION_MOVE_WEIGHT = 0.1f;
 
 const float FreeCamera::KEY_ROTATION_MOVE_WEIGHT = 0.5f;
 
-const float FreeCamera::TRANSLATION_MOVE_WEIGHT = 3.0f;
+const float FreeCamera::TRANSLATION_MOVE_WEIGHT = 1.0f;
 
-const float FreeCamera::TRANSLATION_MOVE_STEP = 50.0f;
+const float FreeCamera::TRANSLATION_MOVE_STEP = 2.0f;
 
-const uint32_t FreeCamera::TRANSLATION_MOVE_SPEED = 4;
+const uint32_t FreeCamera::TRANSLATION_MOVE_SPEED = 1;
+
 
 FreeCamera::FreeCamera(Node &node) :
     NodeScript{node, "FreeCamera"}

@@ -139,10 +139,12 @@ set(RENDERING_SUBPASSES_FILES
     rendering/subpasses/lighting_subpass.h
     rendering/subpasses/geometry_subpass.h
     rendering/subpasses/hpp_forward_subpass.h
+    rendering/subpasses/gltf_model_subpass.h
     # Source files
     rendering/subpasses/forward_subpass.cpp
     rendering/subpasses/lighting_subpass.cpp
-    rendering/subpasses/geometry_subpass.cpp)
+    rendering/subpasses/geometry_subpass.cpp
+    rendering/subpasses/gltf_model_subpass.cpp)
 
 set(SCENE_GRAPH_FILES
     # Header Files
