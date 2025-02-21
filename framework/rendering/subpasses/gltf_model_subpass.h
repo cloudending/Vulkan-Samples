@@ -86,6 +86,8 @@ class GLTFModelSubpass : public vkb::rendering::SubpassC
   protected:
 	virtual void update_uniform(CommandBuffer &command_buffer, sg::Node &node, size_t thread_index);
 
+	virtual void update_joint_matrix(CommandBuffer &command_buffer, sg::Node &nodem, size_t thread_index);
+
 	void draw_submesh(CommandBuffer &command_buffer, sg::SubMesh &sub_mesh, sg::Node &node, VkFrontFace front_face = VK_FRONT_FACE_COUNTER_CLOCKWISE);
 
 	virtual void prepare_pipeline_state(CommandBuffer &command_buffer, VkFrontFace front_face, bool double_sided_material);

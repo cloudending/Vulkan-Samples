@@ -19,6 +19,7 @@
 
 #include "component.h"
 #include "components/transform.h"
+#include "components/skin.h"
 
 namespace vkb
 {
@@ -86,6 +87,49 @@ Component &Node::get_component(const std::type_index index)
 bool Node::has_component(const std::type_index index)
 {
 	return components.count(index) > 0;
+}
+
+void Node::set_skin_index(int index)
+{
+	skin_index = index;
+}
+
+int Node::get_skin_index()
+{
+	return skin_index;
+}
+
+void Node::set_skin(Skin &s)
+{
+	skin = &s;
+}
+
+Skin *Node::get_skin()
+{
+	return skin;
+}
+
+void Node::update_joint_matrix()
+{
+	if (skin)
+	{
+		glm::mat4 inverse_transform = transform.get_world_matrix();
+		
+		size_t num_joints        = (uint32_t) skin->joints.size();
+		std::vector<glm::mat4> joint_matrices(num_joints);
+		for (size_t i = 0; i < num_joints; i++)
+		{
+			joint_matrices[i] = skin->joints[i]->get_transform().get_world_matrix() * skin->inverse_bind_matrices[i];
+			joint_matrices[i] = inverse_transform * joint_matrices[i];
+		}
+
+		skin->inverse_bind_matrices_ssbo->update(joint_matrices.data(), sizeof(glm::mat4) * num_joints, 0);
+
+		for (auto child : children)
+		{
+			child->update_joint_matrix();
+		}
+	}
 }
 
 }        // namespace sg

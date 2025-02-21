@@ -26,6 +26,7 @@
 #include "scene_graph/components/camera.h"
 #include "scene_graph/hpp_scene.h"
 #include "scene_graph/scripts/animation.h"
+#include "scene_graph/components/skin.h"
 
 #if defined(PLATFORM__MACOS)
 #	include <TargetConditionals.h>

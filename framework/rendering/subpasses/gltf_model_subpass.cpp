@@ -60,13 +60,15 @@ void GLTFModelSubpass::prepare()
 			// Same as Geometry except adds lighting definitions to sub mesh variants.
 			//variant.add_definitions({"MAX_LIGHT_COUNT " + std::to_string(MAX_FORWARD_LIGHT_COUNT)});
 
-			variant.add_definitions(vkb::rendering::light_type_definitions);
+			//variant.add_definitions(vkb::rendering::light_type_definitions);
 
 			auto &vert_module = device.get_resource_cache().request_shader_module(VK_SHADER_STAGE_VERTEX_BIT, get_vertex_shader(), variant);
 			auto &frag_module = device.get_resource_cache().request_shader_module(VK_SHADER_STAGE_FRAGMENT_BIT, get_fragment_shader(), variant);
 		}
 	}
 
+	
+	
 	// Build all shader variance upfront
 	//auto &device = get_render_context().get_device();
 	//for (auto &mesh : meshes)
@@ -112,6 +114,10 @@ void GLTFModelSubpass::get_sorted_nodes(std::multimap<float, std::pair<sg::Node 
 	}
 }
 
+/// <summary>
+/// Draw every Node of gltf
+/// </summary>
+/// <param name="command_buffer"></param>
 void GLTFModelSubpass::draw(CommandBuffer &command_buffer)
 {
 
@@ -130,6 +136,8 @@ void GLTFModelSubpass::draw(CommandBuffer &command_buffer)
 		for (auto node_it = opaque_nodes.begin(); node_it != opaque_nodes.end(); node_it++)
 		{
 			update_uniform(command_buffer, *node_it->second.first, thread_index);
+
+			update_joint_matrix(command_buffer, *node_it->second.first, thread_index);
 
 			// Invert the front face if the mesh was flipped
 			const auto &scale      = node_it->second.first->get_transform().get_scale();
@@ -164,7 +172,7 @@ void GLTFModelSubpass::draw(CommandBuffer &command_buffer)
 		for (auto node_it = transparent_nodes.rbegin(); node_it != transparent_nodes.rend(); node_it++)
 		{
 			update_uniform(command_buffer, *node_it->second.first, thread_index);
-
+			update_joint_matrix(command_buffer, *node_it->second.first, thread_index);
 			draw_submesh(command_buffer, *node_it->second.second, *node_it->second.first);
 		}
 	}
@@ -182,6 +190,16 @@ void GLTFModelSubpass::update_uniform(CommandBuffer &command_buffer, sg::Node &n
 	allocation.update(ubo_scene);
 
 	command_buffer.bind_buffer(allocation.get_buffer(), allocation.get_offset(), allocation.get_size(), 0, 1, 0);
+}
+
+void GLTFModelSubpass::update_joint_matrix(CommandBuffer &command_buffer, sg::Node &node, size_t thread_index)
+{
+	sg::Skin *skin = node.get_skin();
+	if (skin) {
+		node.update_joint_matrix();
+		command_buffer.bind_buffer(*skin->inverse_bind_matrices_ssbo, 0, skin->inverse_bind_matrices.size() * sizeof(glm::mat4), 0, 2, 0);
+		
+	}
 }
 
 void GLTFModelSubpass::draw_submesh(CommandBuffer &command_buffer, sg::SubMesh &sub_mesh, sg::Node& node, VkFrontFace front_face)

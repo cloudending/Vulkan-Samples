@@ -41,6 +41,7 @@ void Animation::add_channel(Node &node, const AnimationTarget &target, const Ani
 void Animation::update(float delta_time)
 {
 	current_time += delta_time;
+	LOGI("deltatime {}", delta_time);
 	if (current_time > end_time)
 	{
 		current_time -= end_time;

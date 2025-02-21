@@ -24,6 +24,7 @@
 #include <vector>
 
 #include "scene_graph/components/transform.h"
+#include "scene_graph/components/skin.h"
 
 namespace vkb
 {
@@ -73,6 +74,16 @@ class Node
 	}
 
 	bool has_component(const std::type_index index);
+	
+	void set_skin_index(int index);
+
+	int get_skin_index();
+
+	void set_skin(Skin& skin);
+
+	Skin* get_skin();
+
+	void update_joint_matrix();
 
   private:
 	size_t id;
@@ -86,6 +97,11 @@ class Node
 	std::vector<Node *> children;
 
 	std::unordered_map<std::type_index, Component *> components;
+
+	int skin_index{-1};
+
+	Skin *skin{nullptr};
+
 };
 }        // namespace sg
 }        // namespace vkb

@@ -173,6 +173,7 @@ set(SCENE_GRAPH_COMPONENT_FILES
     scene_graph/components/sampler.h
     scene_graph/components/sub_mesh.h
     scene_graph/components/texture.h
+    scene_graph/components/skin.h
     scene_graph/components/transform.h
     scene_graph/components/image/astc.h
     scene_graph/components/image/ktx.h
@@ -195,6 +196,7 @@ set(SCENE_GRAPH_COMPONENT_FILES
     scene_graph/components/sampler.cpp
     scene_graph/components/sub_mesh.cpp
     scene_graph/components/texture.cpp
+    scene_graph/components/skin.cpp
     scene_graph/components/transform.cpp
     scene_graph/components/image/astc.cpp
     scene_graph/components/image/ktx.cpp

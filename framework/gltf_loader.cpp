@@ -21,6 +21,7 @@
 
 #include <limits>
 #include <queue>
+#include <optional>
 
 #include "common/error.h"
 
@@ -46,6 +47,7 @@
 #include "scene_graph/components/sampler.h"
 #include "scene_graph/components/sub_mesh.h"
 #include "scene_graph/components/texture.h"
+#include "scene_graph/components/skin.h" 
 #include "scene_graph/components/transform.h"
 #include "scene_graph/node.h"
 #include "scene_graph/scene.h"
@@ -855,6 +857,7 @@ sg::Scene GLTFLoader::load_scene(int scene_index, VkBufferUsageFlags additional_
 	{
 		auto gltf_node = model.nodes[node_index];
 		auto node      = parse_node(gltf_node, node_index);
+		node->set_skin_index(gltf_node.skin);
 
 		if (gltf_node.mesh >= 0)
 		{
@@ -891,6 +894,64 @@ sg::Scene GLTFLoader::load_scene(int scene_index, VkBufferUsageFlags additional_
 
 		nodes.push_back(std::move(node));
 	}
+
+
+	
+	std::vector<std::unique_ptr<sg::Skin>> skins;
+
+	// load skins
+	for (auto &skin : model.skins)
+	{
+		auto skin_component = std::make_unique<sg::Skin>(skin.name);
+		skin_component->set_skeleton_node(*nodes[skin.skeleton]);
+		for (auto &joint_index : skin.joints)
+		{
+			skin_component->joints.push_back(&(*nodes[joint_index]));
+		}
+
+		if (skin.inverseBindMatrices > -1) {
+			//auto mat_data = get_attribute_data(&model, skin.inverseBindMatrices);
+			int  accessor_id = skin.inverseBindMatrices;
+			assert(accessor_id < model.accessors.size());
+			auto &accessor = model.accessors[accessor_id];
+			assert(accessor.bufferView < model.bufferViews.size());
+			auto &bufferView = model.bufferViews[accessor.bufferView];
+			assert(bufferView.buffer < model.buffers.size());
+			auto &buffer = model.buffers[bufferView.buffer];
+
+			skin_component->inverse_bind_matrices.resize(accessor.count);
+			memcpy(skin_component->inverse_bind_matrices.data(), &buffer.data[accessor.byteOffset + bufferView.byteOffset], accessor.count * sizeof(glm::mat4));
+
+			size_t stride    = accessor.ByteStride(bufferView);
+			size_t startByte = accessor.byteOffset + bufferView.byteOffset;
+			size_t endByte   = startByte + accessor.count * stride;
+
+			std::vector<uint8_t> mat_data{buffer.data.begin() + startByte, buffer.data.begin() + endByte};
+
+			
+			auto vk_buffer = std::make_unique<vkb::core::BufferC>(device,
+			                          mat_data.size(),
+			                          VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | additional_buffer_usage_flags,
+			                          VMA_MEMORY_USAGE_CPU_TO_GPU);
+			vk_buffer->update(mat_data);
+			vk_buffer->set_debug_name(fmt::format("'{}' skin, inverseBindMatrices",
+			                                  skin.name));
+
+			skin_component->inverse_bind_matrices_ssbo = (std::move(vk_buffer));
+		}	
+
+		skins.push_back(std::move(skin_component));
+	}
+
+	for (auto& node : nodes) {
+		int skin_index = node->get_skin_index();
+		if (skin_index > -1 && skin_index < skins.size())
+		{
+			node->set_skin(*skins[skin_index]);
+		}
+	}
+
+	scene.set_components(std::move(skins));
 
 	std::vector<std::unique_ptr<sg::Animation>> animations;
 

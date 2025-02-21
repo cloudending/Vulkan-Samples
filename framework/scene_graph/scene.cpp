@@ -135,5 +135,6 @@ Node &Scene::get_root_node()
 {
 	return *root;
 }
+
 }        // namespace sg
 }        // namespace vkb
