@@ -30,6 +30,10 @@
 
 #define MAX_FORWARD_LIGHT_COUNT 2
 
+
+static int render_count = 0;
+
+
 struct alignas(16) ForwardLights1
 {
 	vkb::rendering::Light directional_lights[MAX_FORWARD_LIGHT_COUNT];
@@ -120,7 +124,7 @@ void GLTFModelSubpass::get_sorted_nodes(std::multimap<float, std::pair<sg::Node 
 /// <param name="command_buffer"></param>
 void GLTFModelSubpass::draw(CommandBuffer &command_buffer)
 {
-
+	render_count = 0;
 	allocate_lights<ForwardLights1>(scene.get_components<sg::Light>(), MAX_FORWARD_LIGHT_COUNT);
 	command_buffer.bind_lighting(get_lighting_state(), 0, 4);
 
@@ -176,6 +180,8 @@ void GLTFModelSubpass::draw(CommandBuffer &command_buffer)
 			draw_submesh(command_buffer, *node_it->second.second, *node_it->second.first);
 		}
 	}
+
+	//LOGI("render mesh count:{}", render_count);
 }
 
 void GLTFModelSubpass::update_uniform(CommandBuffer &command_buffer, sg::Node &node, size_t thread_index)
@@ -284,7 +290,7 @@ void GLTFModelSubpass::draw_submesh(CommandBuffer &command_buffer, sg::SubMesh &
 			command_buffer.bind_vertex_buffers(input_resource.location, std::move(buffers), {0});
 		}
 	}
-
+	render_count++;
 	draw_submesh_command(command_buffer, sub_mesh);
 }
 

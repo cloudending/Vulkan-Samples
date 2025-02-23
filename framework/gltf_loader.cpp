@@ -753,6 +753,12 @@ sg::Scene GLTFLoader::load_scene(int scene_index, VkBufferUsageFlags additional_
 				std::transform(attrib_name.begin(), attrib_name.end(), attrib_name.begin(), ::tolower);
 
 				auto vertex_data = get_attribute_data(&model, attribute.second);
+				if (attribute.first == "JOINTS_0")
+				{
+					const uint16_t *joint_index_buffer = reinterpret_cast<const uint16_t *>(vertex_data.data());
+					LOGI("first joint indices:{} {} {} {}", joint_index_buffer[0], joint_index_buffer[1], joint_index_buffer[2], joint_index_buffer[3]);
+				}
+				
 
 				if (attrib_name == "position")
 				{

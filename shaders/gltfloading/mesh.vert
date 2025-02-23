@@ -3,7 +3,7 @@
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec2 texcoord_0;
 layout(location = 2) in vec3 normal;
-layout(location = 3) in vec4 joints_0;
+layout(location = 3) in uvec4 joints_0;
 layout(location = 4) in vec4 weights_0;
 
 layout(set = 0, binding = 1) uniform UBOScene

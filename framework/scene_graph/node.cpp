@@ -113,7 +113,7 @@ void Node::update_joint_matrix()
 {
 	if (skin)
 	{
-		glm::mat4 inverse_transform = transform.get_world_matrix();
+		glm::mat4 inverse_transform = glm::inverse(transform.get_world_matrix());
 		
 		size_t num_joints        = (uint32_t) skin->joints.size();
 		std::vector<glm::mat4> joint_matrices(num_joints);
