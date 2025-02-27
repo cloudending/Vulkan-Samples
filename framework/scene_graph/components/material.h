@@ -55,7 +55,7 @@ class Material : public Component
 
 	Material(Material &&other) = default;
 
-	virtual ~Material() = default;
+virtual ~Material() = default;
 
 	virtual std::type_index get_type() override;
 

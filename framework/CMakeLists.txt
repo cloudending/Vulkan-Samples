@@ -392,6 +392,12 @@ set(LINUX_D2D_FILES
     platform/unix/unix_d2d_platform.cpp
     platform/unix/direct_window.cpp)
 
+set(ST3DLIB_FILES
+    st3dlib/AssetLoader.cpp
+    st3dlib/MetaScene.cpp
+    st3dlib/MetaSceneParser.cpp
+    )
+
 source_group("\\" FILES ${FRAMEWORK_FILES})
 source_group("common\\" FILES ${COMMON_FILES})
 source_group("platform\\" FILES ${PLATFORM_FILES})
@@ -423,7 +429,8 @@ set(PROJECT_FILES
     ${SCENE_GRAPH_FILES}
     ${SCENE_GRAPH_COMPONENT_FILES}
     ${SCENE_GRAPH_SCRIPTS_FILES}
-    ${STATS_FILES})
+    ${STATS_FILES}
+    ${ST3DLIB_FILES})
 
 # No need for explicit casts from vk::HandleType to VkHandleType on ANDROID
 if(ANDROID)

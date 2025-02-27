@@ -73,6 +73,11 @@ class HPPScene : private vkb::sg::Scene
 			return false;
 		}
 	}
+
+	vkb::sg::Node *find_node(std::string &node_name)
+	{
+		return vkb::sg::Scene::find_node(node_name);
+	}
 };
 }        // namespace scene_graph
 }        // namespace vkb

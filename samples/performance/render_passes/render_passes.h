@@ -23,6 +23,11 @@
 #include "scene_graph/components/perspective_camera.h"
 #include "vulkan_sample.h"
 
+namespace strender
+{
+class MetaScene;
+}
+
 /**
  * @brief Appropriate use of render pass attachment operations
  */
@@ -58,6 +63,8 @@ class RenderPassesSample : public vkb::VulkanSampleC
   private:
 	void reset_stats_view() override;
 
+	void load_metascene(const std::string &path);
+	
 	void draw_renderpass(vkb::CommandBuffer &command_buffer, vkb::RenderTarget &render_target) override;
 
 	vkb::sg::PerspectiveCamera *camera{nullptr};
@@ -78,6 +85,8 @@ class RenderPassesSample : public vkb::VulkanSampleC
 	std::vector<RadioButtonGroup *> radio_buttons = {&load, &store};
 
 	float frame_rate;
+
+	strender::MetaScene *metascene;
 };
 
 std::unique_ptr<vkb::VulkanSampleC> create_render_passes();

@@ -16,9 +16,11 @@
  */
 
 #include "render_passes.h"
-
+#include "picojson.h"
+#include "st3dlib/MetaSceneParser.h"
 #include "common/vk_common.h"
 #include "filesystem/legacy.h"
+#include "scene_graph/components/pbr_material.h"
 #include "gltf_loader.h"
 #include "gui.h"
 
@@ -50,6 +52,13 @@ void RenderPassesSample::reset_stats_view()
 	{
 		get_gui().get_stats_view().reset_max_value(vkb::StatIndex::gpu_ext_write_bytes);
 	}
+}
+
+void RenderPassesSample::load_metascene(const std::string &path)
+ {
+	strender::MetaSceneParser metascene_parser(*device);
+	metascene = metascene_parser.load_scene_from_file(path);
+	scene = std::unique_ptr<vkb::scene_graph::HPPScene>(reinterpret_cast<vkb::scene_graph::HPPScene *>(metascene->scene));
 }
 
 void RenderPassesSample::draw_gui()
@@ -110,7 +119,13 @@ bool RenderPassesSample::prepare(const vkb::ApplicationOptions &options)
 	                           vkb::StatIndex::gpu_ext_read_bytes,
 	                           vkb::StatIndex::gpu_ext_write_bytes});
 
-	load_scene("models/CesiumMan/glTF/CesiumMan.gltf");
+	//load_scene("models/CesiumMan/glTF/CesiumMan.gltf");
+	//load_scene("models/gltf_animation_example0/gltf_animation_example.gltf");
+
+	load_metascene("models/gltf_animation_example0/gltf_animation_example.metascene");
+
+
+
 
 	auto &camera_node = vkb::add_free_camera(get_scene(), "main_camera", get_render_context().get_surface_extent());
 	camera            = dynamic_cast<vkb::sg::PerspectiveCamera *>(&camera_node.get_component<vkb::sg::Camera>());

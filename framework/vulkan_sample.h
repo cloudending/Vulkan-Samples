@@ -375,10 +375,12 @@ class VulkanSample : public vkb::Application
 	 */
 	std::vector<LayerSettingType> const &get_layer_settings() const;
 
+
+
 	/// <summary>
 	/// PRIVATE MEMBERS
 	/// </summary>
-  private:
+  protected:
 	/**
 	 * @brief The Vulkan instance
 	 */
